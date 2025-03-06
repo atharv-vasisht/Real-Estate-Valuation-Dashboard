@@ -3,8 +3,6 @@ from dash import dcc, html
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
-from flask import jsonify
-import json
 
 # Load the cleaned Zillow dataset
 df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
@@ -16,57 +14,8 @@ date_columns = df.columns[5:]  # Assuming first 5 columns are date-based
 
 # Initialize Dash app
 app = dash.Dash(__name__)
-server = app.server
 
-# API Routes
-@server.route('/api/states')
-def get_states():
-    return jsonify({'states': list(states)})
-
-@server.route('/api/metros')
-def get_metros():
-    state = request.args.get('state')
-    if state and state in metro_options:
-        return jsonify({'metros': list(metro_options[state])})
-    return jsonify({'metros': []})
-
-@server.route('/api/dates')
-def get_dates():
-    return jsonify({'dates': list(date_columns)})
-
-@server.route('/api/chart-data')
-def get_chart_data():
-    state = request.args.get('state')
-    metro = request.args.get('metro')
-    date = request.args.get('date')
-
-    filtered_df = df.copy()
-
-    # Apply State & Metro Filters
-    if state:
-        filtered_df = filtered_df[filtered_df["StateName"] == state]
-    if metro:
-        filtered_df = filtered_df[filtered_df["RegionName"] == metro]
-
-    # Ensure data exists
-    if filtered_df.empty:
-        return jsonify({'error': 'No data available for the selected filters'})
-
-    # Format data for visualization
-    filtered_df = filtered_df[['RegionName', 'StateName', date]].copy()
-    filtered_df.rename(columns={'RegionName': 'City', 'StateName': 'State', date: 'Median Price'}, inplace=True)
-
-    # Create Bar Chart
-    figure = px.bar(filtered_df, x="City", y="Median Price", color="State",
-                    title=f"Median Housing Prices ({date})",
-                    labels={"City": "Metro Area", "Median Price": "Price ($)"})
-
-    return jsonify({
-        'data': figure.to_dict()['data'],
-        'layout': figure.to_dict()['layout']
-    })
-
-# Dash layout (can be removed if you're only using the API)
+# Dash layout
 app.layout = html.Div([
     html.H1("Real Estate Market Dashboard"),
     dcc.Dropdown(
@@ -89,7 +38,7 @@ app.layout = html.Div([
     dcc.Graph(id="price-chart")
 ])
 
-# Dash callbacks (can be removed if you're only using the API)
+# Dash callbacks
 @app.callback(
     Output("metro-dropdown", "options"),
     [Input("state-dropdown", "value")]

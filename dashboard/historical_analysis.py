@@ -1,15 +1,17 @@
 import dash
 from dash import dcc, html
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.express as px
 from dash.dependencies import Input, Output
+from pyngrok import ngrok
 
 # ✅ Load the cleaned Zillow dataset
 df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
 
-# ✅ Convert column names to string format for date consistency
-df.columns = df.columns.map(lambda x: str(x) if "-" in str(x) else x)
-date_columns = [col for col in df.columns if "-" in col]
+# ✅ Extract unique states & metros
+states = df["StateName"].dropna().unique()
+metro_options = {state: df[df["StateName"] == state]["RegionName"].unique() for state in states}
+date_columns = df.columns[5:]  # Assuming first 5 columns are date-based
 
 # ✅ Initialize Dash app
 app = dash.Dash(__name__)
@@ -17,127 +19,77 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1("📊 Historical Housing Market Analysis", style={'text-align': 'center', 'font-size': '32px'}),
 
-    # ✅ Dropdown for selecting time period
+    # ✅ Dropdown for selecting state
     dcc.Dropdown(
-        id="time-period-dropdown",
-        options=[
-            {"label": "1 Year", "value": 12},
-            {"label": "5 Years", "value": 60},
-            {"label": "10 Years", "value": 120},
-            {"label": "All Time", "value": "all"}
-        ],
-        value="all",  # Default to all-time
-        clearable=False,
-        style={'width': '40%', 'margin': 'auto'}
+        id="state-dropdown",
+        options=[{"label": state, "value": state} for state in states],
+        placeholder="Select a State",
+        clearable=True
     ),
 
-    # ✅ Radio buttons to choose analysis type
-    html.Div([
-        dcc.RadioItems(
-            id="analysis-type",
-            options=[
-                {"label": " Top 15 Appreciating Metros", "value": "top"},
-                {"label": " Bottom 15 Depreciating Metros", "value": "bottom"},
-                {"label": " Search a Specific Metro", "value": "search"}
-            ],
-            value="top",  # Default to top 15 appreciating metros
-            inline=True,
-            style={'text-align': 'center', 'margin-top': '10px'}
-        )
-    ]),
-
-    # ✅ Search bar for specific metro
-    dcc.Input(
-        id="metro-search",
-        type="text",
-        placeholder="Enter a Metro (e.g., Seattle, WA)",
-        debounce=True,
-        style={'display': 'none', 'width': '40%', 'margin': 'auto'}
+    # ✅ Dropdown for selecting metro
+    dcc.Dropdown(
+        id="metro-dropdown",
+        placeholder="Select a Metro",
+        clearable=True
     ),
 
     # ✅ Graph Output
-    dcc.Graph(id="historical-trends")
+    dcc.Graph(id="historical-chart")
 ])
 
-# ✅ Callback to update search bar visibility
+# ✅ Callback to update metro dropdown based on state
 @app.callback(
-    Output("metro-search", "style"),
-    Input("analysis-type", "value")
+    Output("metro-dropdown", "options"),
+    [Input("state-dropdown", "value")]
 )
-def toggle_search_visibility(selected_option):
-    if selected_option == "search":
-        return {'display': 'block', 'width': '40%', 'margin': 'auto'}
-    return {'display': 'none'}
+def update_metro_dropdown(selected_state):
+    if selected_state is None:
+        return []
+    return [{"label": metro, "value": metro} for metro in metro_options[selected_state]]
 
 # ✅ Callback to update the chart
 @app.callback(
-    Output("historical-trends", "figure"),
-    [Input("time-period-dropdown", "value"),
-     Input("analysis-type", "value"),
-     Input("metro-search", "value")]
+    Output("historical-chart", "figure"),
+    [Input("state-dropdown", "value"),
+     Input("metro-dropdown", "value")]
 )
-def update_chart(period, analysis_type, metro):
-    # ✅ Get start and end date columns
-    end_date = date_columns[-1]  # Latest date
-    if period == "all":
-        start_date = date_columns[0]  # First available date
-    else:
-        start_date_idx = max(0, len(date_columns) - period)
-        start_date = date_columns[start_date_idx]
+def update_historical_chart(selected_state, selected_metro):
+    filtered_df = df.copy()
 
-    # ✅ Calculate % change
-    df_filtered = df[["RegionName", "StateName", start_date, end_date]].dropna().copy()
-    df_filtered["% Change"] = ((df_filtered[end_date] - df_filtered[start_date]) / df_filtered[start_date]) * 100
+    if selected_state:
+        filtered_df = filtered_df[filtered_df["StateName"] == selected_state]
+    if selected_metro:
+        filtered_df = filtered_df[filtered_df["RegionName"] == selected_metro]
 
-    # ✅ Format Metro Names
-    df_filtered["Metro"] = df_filtered["RegionName"] + ", " + df_filtered["StateName"]
+    if filtered_df.empty:
+        return px.line(title="No data available for the selected filters")
 
-    # ✅ Select metros based on analysis type
-    if analysis_type == "top":
-        df_filtered = df_filtered.nlargest(15, "% Change")
-        title = f"🏆 {period} Housing Market Trends - Top 15 Appreciating Metros"
-    elif analysis_type == "bottom":
-        df_filtered = df_filtered.nsmallest(15, "% Change")
-        title = f"📉 {period} Housing Market Trends - Bottom 15 Depreciating Metros"
-    else:
-        df_filtered = df_filtered[df_filtered["Metro"].str.contains(metro, case=False, na=False)]
-        title = f"📍 {period} Housing Market Trends - {metro}"
+    # Create time series data
+    time_series_data = []
+    for _, row in filtered_df.iterrows():
+        for date in date_columns:
+            time_series_data.append({
+                'Date': date,
+                'Price': row[date],
+                'City': row['RegionName'],
+                'State': row['StateName']
+            })
 
-    # ✅ Create figure
-    fig = go.Figure()
+    time_series_df = pd.DataFrame(time_series_data)
 
-    # ✅ Add "Before" bars
-    fig.add_trace(go.Bar(
-        x=df_filtered["Metro"],
-        y=df_filtered[start_date],
-        name="Before",
-        marker=dict(color="gray"),
-        text=df_filtered[start_date].apply(lambda x: f"${x:,.0f}"),
-        textposition="inside"
-    ))
-
-    # ✅ Add "After" bars
-    fig.add_trace(go.Bar(
-        x=df_filtered["Metro"],
-        y=df_filtered[end_date],
-        name="After",
-        marker=dict(color=df_filtered["% Change"], colorscale="RdYlGn"),
-        text=df_filtered[end_date].apply(lambda x: f"${x:,.0f}"),
-        textposition="inside"
-    ))
-
-    # ✅ Layout adjustments
-    fig.update_layout(
-        title=title,
-        xaxis=dict(title="Metropolitan Area", tickangle=-30),
-        yaxis=dict(title="Median Home Price ($)", tickformat="$,.0f"),
-        barmode="group",  # Group bars to show before vs after
-        coloraxis=dict(colorbar_title="% Change"),
-        template="plotly_white"
-    )
-
-    return fig
+    return px.line(time_series_df, 
+                  x='Date', 
+                  y='Price',
+                  color='City',
+                  title='Historical Housing Prices Over Time',
+                  labels={'Price': 'Median Price ($)'})
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8070)
+    # Start ngrok tunnel
+    public_url = ngrok.connect(8051).public_url
+    print(f" * Public URL: {public_url}")
+    
+    # Run the server
+    app.run_server(debug=True, host="127.0.0.1", port=8051)
 
