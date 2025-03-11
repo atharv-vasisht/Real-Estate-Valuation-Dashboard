@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 import os
 
 # Load the cleaned Zillow dataset
-df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
+df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real-Estate-Valuation-Project/data/zillow_housing_cleaned.csv")
 
 # Extract unique states & metros
 states = df["StateName"].dropna().unique()
@@ -73,8 +73,7 @@ def update_chart(selected_state, selected_metro, selected_date):
                   title=f"Median Housing Prices ({selected_date})",
                   labels={"City": "Metro Area", "Median Price": "Price ($)"})
 
-'''
+# Run the Dash app
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))  # Default to 8050 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)'
-    '''
+    port = int(os.environ.get("PORT", 8050))  # Default 8050 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)

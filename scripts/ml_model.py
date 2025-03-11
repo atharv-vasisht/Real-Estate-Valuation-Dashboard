@@ -29,7 +29,7 @@ logging.basicConfig(
 )
 
 # ✅ Load the cleaned Zillow dataset
-df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
+df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real-Estate-Valuation-Project/data/zillow_housing_cleaned.csv")
 
 # ✅ Convert date columns to datetime format
 df.columns = [pd.to_datetime(col, errors='ignore') if '-' in str(col) else col for col in df.columns]
@@ -338,8 +338,8 @@ def update_graph(selected_metro, years_to_predict):
         logging.error(f"Error in update_graph: {str(e)}")
         return go.Figure(), html.Div("Error occurred while generating predictions. Please try again.")
 
-'''
+# Run the Dash app
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8060))  # Default to 8060 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)'
-    '''
+    port = int(os.environ.get("PORT", 8070))  # Default 8050 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)
+

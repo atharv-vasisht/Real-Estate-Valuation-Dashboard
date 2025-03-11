@@ -9,7 +9,7 @@ import numpy as np
 import requests
 
 # ✅ Load the cleaned Zillow dataset
-df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
+df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real-Estate-Valuation-Project/data/zillow_housing_cleaned.csv")
 
 # ✅ Load correct latitude & longitude data for metros
 geo_data = pd.read_csv("https://raw.githubusercontent.com/kelvins/US-Cities-Database/main/csv/us_cities.csv")
@@ -145,7 +145,13 @@ def update_map(selected_date, animation_enabled):
 
     return fig
 
+
+# ✅ Run the app
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8060))  # Default 8050 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)
+
 '''
 if __name__ == "__main__":
     app.run_server(debug=True, host="127.0.0.1", port=8080)'
-    '''
+'''

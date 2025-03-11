@@ -29,5 +29,4 @@ def index():
 
 # Ensure Flask binds to Render’s dynamic port
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # Default to 10000 for local testing
-    server.run(host="0.0.0.0", port=port, debug=True)
+    app.run_server(debug=True)  # REMOVE host/port settings

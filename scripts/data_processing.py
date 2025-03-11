@@ -3,7 +3,7 @@ import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
 
 # Load raw Zillow data
-df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_data.csv", na_values=[',,,'])
+df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real-Estate-Valuation-Project/data/zillow_housing_data.csv", na_values=[',,,'])
 
 # Only analyze the 150 largest metros for accuracy
 df = df.iloc[:150]
