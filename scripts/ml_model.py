@@ -36,7 +36,13 @@ df.columns = [pd.to_datetime(col, errors='ignore') if '-' in str(col) else col f
 date_columns = [col for col in df.columns if isinstance(col, pd.Timestamp)]
 
 # ✅ Initialize Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, requests_pathname_prefix="/ml-model/")
+
+app.layout = html.Div([
+    html.H1("Price Prediction Dashboard")
+])
+
+server = app.server  # Ensure Flask can access the Dash app
 
 app.layout = html.Div([
     html.H1("Housing Market Price Prediction"),

@@ -14,7 +14,13 @@ metro_options = {state: df[df["StateName"] == state]["RegionName"].unique() for 
 date_columns = df.columns[5:]  # Assuming first 5 columns are date-based
 
 # Initialize Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, requests_pathname_prefix="/app/")
+
+app.layout = html.Div([
+    html.H1("Market Analysis Dashboard")
+])
+
+server = app.server  # Ensure Flask can access the Dash app
 
 # Dash layout
 app.layout = html.Div([

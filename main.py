@@ -1,32 +1,28 @@
-# The code above is the main entry point for the application. 
-# It initializes a Flask server and binds the Dash apps to it. 
-# The Flask server also serves the index.html file, which contains the navigation links to the different Dash apps.
 import os
 from flask import Flask, render_template
-from dash import Dash
-import dash_html_components as html
-
-# Initialize Flask app
-server = Flask(__name__)
-
-# Import Dash apps (Ensure these files exist)
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
 from dashboard.app import app as dash1
 from dashboard.historical_analysis import app as dash2
 from scripts.ml_model import app as dash3
 
-# Attach Dash apps inside Flask
-def setup_dash(dash_app, url_path):
-    dash_app.init_app(server, url_base_pathname=url_path)
+# Initialize Flask app
+server = Flask(__name__, template_folder="templates")
 
-setup_dash(dash1, "/app/")
-setup_dash(dash2, "/historical/")
-setup_dash(dash3, "/ml-model/")
-
-# Define main HTML page
 @server.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html")  # Ensuring correct template loading
 
-# Ensure Flask binds to Render’s dynamic port
+# Configure Dash apps to run under Flask using DispatcherMiddleware
+application = DispatcherMiddleware(
+    server.wsgi_app, {
+        "/app": dash1.server,
+        "/historical": dash2.server,
+        "/ml-model": dash3.server,
+    }
+)
+
+# Run Flask with Render-compatible dynamic port
 if __name__ == "__main__":
-    app.run_server(debug=True)  # REMOVE host/port settings
+    port = int(os.environ.get("PORT", 8080))  # Ensure Render compatibility
+    run_simple("0.0.0.0", port, application, use_reloader=True, use_debugger=True)
