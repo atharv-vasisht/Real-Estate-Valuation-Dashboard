@@ -1,3 +1,4 @@
+'''
 import dash
 from dash import dcc, html
 import pandas as pd
@@ -151,7 +152,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8060))  # Default 8050 for local testing
     app.run_server(debug=True, host="0.0.0.0", port=port)
 
-'''
 if __name__ == "__main__":
     app.run_server(debug=True, host="127.0.0.1", port=8080)'
+
 '''

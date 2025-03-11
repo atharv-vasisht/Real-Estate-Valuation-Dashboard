@@ -82,4 +82,4 @@ def update_chart(selected_state, selected_metro, selected_date):
 # Run the Dash app
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))  # Default 8050 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)
+    app.run_server(debug=False, host="0.0.0.0", port=port)

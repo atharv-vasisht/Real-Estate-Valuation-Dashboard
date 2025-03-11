@@ -1,1 +1,1 @@
-web: gunicorn main:server --bind 0.0.0.0:$PORT
+web: gunicorn -w 4 -k gevent main:server --bind 0.0.0.0:$PORT

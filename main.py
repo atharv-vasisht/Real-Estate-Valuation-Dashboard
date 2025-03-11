@@ -25,4 +25,4 @@ application = DispatcherMiddleware(
 # Run Flask with Render-compatible dynamic port
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))  # Ensure Render compatibility
-    run_simple("0.0.0.0", port, application, use_reloader=True, use_debugger=True)
+    run_simple("0.0.0.0", port, application, use_reloader=False, use_debugger=False)

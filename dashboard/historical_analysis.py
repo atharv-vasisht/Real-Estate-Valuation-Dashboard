@@ -94,6 +94,6 @@ def update_historical_chart(selected_state, selected_metro):
 # Run the server
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8055))  # Default 8050 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)
+    app.run_server(debug=False, host="0.0.0.0", port=port)
 
 
