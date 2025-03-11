@@ -340,4 +340,5 @@ def update_graph(selected_metro, years_to_predict):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8060)
+    port = int(os.environ.get("PORT", 8060))  # Default to 8060 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)

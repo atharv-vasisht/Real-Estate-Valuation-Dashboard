@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
 from pyngrok import ngrok
+import os
 
 # ✅ Load the cleaned Zillow dataset
 df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
@@ -91,5 +92,7 @@ if __name__ == "__main__":
     print(f" * Public URL: {public_url}")
     
     # Run the server
-    app.run_server(debug=True, host="127.0.0.1", port=8051)
+   if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8051))  # Default to 8051 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)
 

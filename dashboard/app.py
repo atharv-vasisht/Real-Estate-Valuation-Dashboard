@@ -3,6 +3,7 @@ from dash import dcc, html
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
+import os
 
 # Load the cleaned Zillow dataset
 df = pd.read_csv("/Users/AtharvVasisht/Documents/GitHub/Real Estate Valuation Project/data/zillow_housing_cleaned.csv")
@@ -73,4 +74,5 @@ def update_chart(selected_state, selected_metro, selected_date):
                   labels={"City": "Metro Area", "Median Price": "Price ($)"})
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1", port=8050)
+    port = int(os.environ.get("PORT", 8050))  # Default to 8050 for local testing
+    app.run_server(debug=True, host="0.0.0.0", port=port)
