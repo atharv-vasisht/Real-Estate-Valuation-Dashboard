@@ -338,7 +338,8 @@ def update_graph(selected_metro, years_to_predict):
         logging.error(f"Error in update_graph: {str(e)}")
         return go.Figure(), html.Div("Error occurred while generating predictions. Please try again.")
 
-
+'''
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8060))  # Default to 8060 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)
+    app.run_server(debug=True, host="0.0.0.0", port=port)'
+    '''

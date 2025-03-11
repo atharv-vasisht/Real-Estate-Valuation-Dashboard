@@ -73,6 +73,8 @@ def update_chart(selected_state, selected_metro, selected_date):
                   title=f"Median Housing Prices ({selected_date})",
                   labels={"City": "Metro Area", "Median Price": "Price ($)"})
 
+'''
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))  # Default to 8050 for local testing
-    app.run_server(debug=True, host="0.0.0.0", port=port)
+    app.run_server(debug=True, host="0.0.0.0", port=port)'
+    '''
