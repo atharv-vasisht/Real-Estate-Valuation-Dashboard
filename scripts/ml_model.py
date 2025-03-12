@@ -345,8 +345,10 @@ def update_graph(selected_metro, years_to_predict):
         return go.Figure(), html.Div("Error occurred while generating predictions. Please try again.")
 
 # Run the Dash app
+'''
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8070))  # Default 8050 for local testing
-    app.run_server(debug=False, host="0.0.0.0", port=port)
+    app.run_server(debug=False, host="0.0.0.0", port=port)'
+    '''
 
 
