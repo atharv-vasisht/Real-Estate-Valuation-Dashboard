@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root color variables for easy theming */
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #111111;
+  --border: #23272f;
+  --accent: #22d3ee;
+  --accent2: #a78bfa;
+  --shadow: 0 4px 32px 0 rgba(34,211,238,0.08), 0 1.5px 8px 0 rgba(167,139,250,0.06);
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', 'Geist', 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+
+/* Card and container base styles */
+.bg-card, .card {
+  background: var(--card-bg);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+/* Accent text and gradient */
+.text-accent {
+  color: var(--accent);
+}
+.text-gradient {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button styles */
+.btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-md hover:from-cyan-500 hover:to-purple-400;
+}
+
+/* Input and select styles */
+input, select {
+  @apply bg-[#181c20] border border-cyan-400 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #181c20;
+}
+::-webkit-scrollbar-thumb {
+  background: #23272f;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Chart customizations (for recharts, plotly, etc.) */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgba(17, 17, 17, 0.95) !important;
+  border: 1px solid rgba(34, 211, 238, 0.2) !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.08);
+}
+.recharts-tooltip-label,
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value {
+  color: #ededed !important;
+  font-weight: 500;
+}
+
+/* Utility classes for spacing and layout */
+.section {
+  @apply py-8 px-4 md:px-8;
+}
+.centered {
+  @apply flex items-center justify-center;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .card, .bg-card {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+  .section {
+    padding: 1.5rem 0.5rem;
+  }
+}
+
+/* Subtle background grid or noise (optional) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+}
