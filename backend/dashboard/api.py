@@ -6,6 +6,9 @@ import os
 app = Flask(__name__)
 CORS(app)  # Allow requests from your React frontend
 
+# Use environment variable for port, default to 5002
+PORT = int(os.environ.get('PORT', 5002))
+
 DATA_PATH = os.path.join(os.path.dirname(__file__), '../data/zillow_housing_cleaned.csv')
 FORECAST_PATH = os.path.join(os.path.dirname(__file__), '../processing/lstm_metro_forecast_2025_2050.csv')
 
@@ -42,4 +45,4 @@ def get_forecast(metro_name):
     return jsonify({'metro': metro_name, 'years': years, 'forecasted_prices': prices})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002, host='0.0.0.0')
+    app.run(debug=False, port=PORT, host='0.0.0.0')

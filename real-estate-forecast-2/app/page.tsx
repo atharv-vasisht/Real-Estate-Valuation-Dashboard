@@ -7,7 +7,8 @@ import { Building2, ChevronDown, BarChart3, Home } from "lucide-react"
 const ForecastChart = dynamic(() => import("../components/ForecastChart"), { ssr: false })
 const inter = Inter({ subsets: ["latin"] })
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5002"
 
 export default function Page() {
   const [metros, setMetros] = useState<string[]>([])

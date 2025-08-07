@@ -1,0 +1,27 @@
+services:
+  # Flask Backend API
+  - type: web
+    name: real-estate-api
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend/dashboard && python api.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: PORT
+        value: 5002
+
+  # Next.js Frontend
+  - type: web
+    name: real-estate-dashboard
+    env: node
+    buildCommand: cd real-estate-forecast-2 && npm install && npm run build
+    startCommand: cd real-estate-forecast-2 && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.0.0
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService:
+          name: real-estate-api
+          type: web
+          property: url
