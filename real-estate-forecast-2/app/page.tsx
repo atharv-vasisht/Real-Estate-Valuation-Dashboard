@@ -25,6 +25,7 @@ export default function Page() {
         setIsLoading(true)
         const response = await fetch(`${API_BASE_URL}/api/metros`)
         const data = await response.json()
+        console.log("API Response:", data);
         if (Array.isArray(data)) {
           setMetros(data)
         } else if (data && data.metros) {
